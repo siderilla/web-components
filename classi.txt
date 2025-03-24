@@ -1,0 +1,36 @@
+La CLASSE è
+- come il progetto di una casa
+- descrive cosa avranno in comune tutte le case costruite da quel progetto (stanze, porte, finestre)
+- in Javascript si definisce con la keyword class
+
+L'ISTANZA è
+- la casa vera e propria costruita dal progetto
+- ha proprietà specifiche (colore pareti, numero stanze)
+- in Javascript si crea con new NomeClasse()
+
+class Persona {
+	/// constructor(...) è il metodo che si esegue ogni volta che crei una nuova Persona
+	constructor (nome, annoNascita) {
+		this.nome = nome; // assegnazione proprietà istanza
+		this.annoNascita = annoNascita;
+  	}
+
+	const sara = new Persona('Sara', 1989);
+	const giovanni = new Persona('Giovanni', 1981);
+
+	saluta() {
+		console.log('Ciao, sono ${this.nome}');
+  	}
+
+  	getAge() {
+    	return new Date().getFullYear() - this.annoNascita;
+  	}
+
+}
+
+THIS serve a:
+    Scope locale (constructor): 🔒 nomeLocale
+    Oggetto istanza (this): 🔓 this.nome
+Solo le cose “apparse” su this sopravvivono e diventano accessibili a tutti i metodi della classe.
+
+I metodi di classe non vanno mai inizializzati nel constructor come si fa con le proprietà, sono già disponibile sulle istanze

@@ -1,0 +1,9 @@
+Step	Obiettivo	Spiegazione breve	Quiz (✔️ rispondi!)	Esercizio
+1	Setup progetto	Crea cartella, index.html, main.js	Cos’è un Web Component?	Crea folder + file e apri index.html in browser
+2	Custom Element base	Definisci <hello-world> che scrive “Ciao!”	Come si registra un custom element?	Scrivi class HelloWorld extends HTMLElement e definiscilo
+3	Shadow DOM	Incapsula markup e stile	Perché usare shadowRoot?	Modifica <hello-world> per usare shadowRoot e un <style>
+4	Attributi → proprietà	Passa testo via attribute	Qual è la differenza tra attribute e property?	Aggiungi attributo message="Buongiorno" e leggilo in connectedCallback
+5	StudentCard minimal	Crea <student-card> con nome + year	Cosa restituisce this.getAttribute() se non esiste?	Implementa getter student con fallback
+6	Styling esterno	Carica CSS via <link>	Quale selettore CSS colpisce solo nel Shadow DOM?	Sposta .card {…} in style.css e importalo
+7	SuperGrid	Definisci <super-grid> che itera array	Come ottenere dati in async?	Crea StudentService minimal, carica JSON e genera card via innerHTML
+8	Aggiungi/Edit	Dispatch Event + dialog	Cos’è un CustomEvent?	Aggiungi bottone “Add” che dispatcha add-student, catturalo in grid e apri prompt per inserire nuovo studente

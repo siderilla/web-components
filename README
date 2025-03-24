@@ -1,0 +1,96 @@
+<!-- <script type="module" src="./src/main.js"></script> -->
+ES6 è il tipo di modulo che permette di esportare pezzi di codice e importarli in altri file
+senza module: 	tutte le variabili sono globali - rischio conflitti
+				non si può fare import/export
+				gli script vengono eseguiti a prescindere
+
+IN SINTESI:
+- type="module" dice al browser “questo file JS usa import/export, eseguilo in strict mode e solo dopo che il DOM è pronto”.
+- ogni file diventa un piccolo modulo
+- si può costruire un'architettura di classi, funzioni e servizi senza conflitti
+
+<!-- class HelloWorld extends HTMLElement {
+
+	connectedCallback() {
+		this.textContent = 'Ciao!';
+	}
+}
+
+customElements.define('hello-world', HelloWorld); -->
+
+class HelloWorld - definisco una classe
+extends HTMLElement - permette alla classe di comportarsi come un tag HTML
+connectedCallback() - chiamo il metodo dopo che l'elemento è stato inserito nel DOM, serve a renderizzare/configurare quando è 'connesso'
+this.textContent = 'Ciao!' - l'istanza corrente di <hello-world> (this) sarà un testo da mettere al suo interno (textContent) - ergo popola il contenuto visibile con 'Ciao!'
+customElements.define(...) - registra il componente sul browser - ogni volta che vedi <hello-world> crea un'istanza di HelloWorld
+('hello-world', HelloWorld) - gli si passa i parametri: prima il tag personalizzato (DEVE contenere un trattino per essere riconosciuto come webcomponent(!?)), poi il nome della classe
+
+<!-- constructor() {
+	super();
+	this.attachShadow({mode: 'open'});
+} -->
+
+! una classe non può avere più di un metodo costrutto
+! il costrutto permette di fare inizializzazioni personalizzate che vanno eseguite prima di qualsiasi altro metodo da chiamare o oggetti istanziati
+! il metodo costrutto non può essere getter, setter, async o generator
+! innerHTML interpreta le stringhe come HTML
+! innerText interpreta le stringhe come puro testo (nessun parsing)
+constructor() - è un metodo speciale che inizializza l'istanza
+super() - va sempre usato per richiamare il costruttore della classe genitore (ovvero HTMLElement), se non lo si fa, Javascript non sa come inizializzare l'elemento base
+this.attachShadow({mode: 'open'}) - crea un Shadow DOM isolato per il componente, la modalità 'open' permette di accedervi con this.shadowRoot
+DOM - document object model è una rappresentazione a oggetti della pagina HTML creata dal browser
+	ogni tag html diventa un nodo nell'albero del DOM
+	con javascript si può leggere, modificare, aggiungere o cancellare nodi
+	esempio:
+	document.getElementById('main-div').innerText = 'Ciao!'; --- prendi il nodo main-div e cambia il suo testo
+Shadow DOM - è un piccolo DOM privato all'interno di un web componente
+			isola markup + css dal resto della pagina
+			si crea chiamando this.attachShadow({mode: 'open'});
+	così facendo: this.shadowRoot.innerHTML = `<style>
+													p {
+													 color:red;
+													}
+												</style>
+												<p>Test</p>
+												`;
+	quell'elemento in rosso esiste SOLO dentro il componente, non influisce su altri <p>
+
+.this è una parola chiave che si riferisce all'oggetto corrente in cui stai lavorando
+- dentro un metodo di classe, this punta all'istanza del componente
+- permette di accedere a proprietà e metodi di quell'istanza
+
+get student() {
+	return JSON.parse(this.getAttribute('selected-student'));
+}
+
+const cards = Array.from(this.querySelectorAll('student-card'));
+- cerca SOLO tra i figli di <super-grid>
+- in questo caso this mantiene la logica confinata dentro <super-grid>
+- permette di isolare il componente e lavorare solo sui suoi elementi
+
+this.shadowRoot.innerHTML = cards.map(card => card.outerHTML).join('');
+- all'interno di questo shadow dom, trasforma ogni elemento DOM in una stringa HTML, concatena tutte le stringhe senza separatore e il risultato (una lunga stringa HTML) diventa il contenuto di innerHTML
+IN SOSTANZA: mi trasforma ciascun elemento in questa stringa (se ce n'è più di una le concatena):
+<!-- <student-card selected-student='{"name":"Sara","surname":"De Prà" "yob":1989}'></student-card> -->
+dopo ci inserisce il json parsato da getAttribute
+
+!!!! Il bello dei Web Component e del pattern “container → children” è che ti permette di passare da un markup statico a qualcosa di dinamico, ri‑usabile, e mantenibile. 
+
+
+Scrittura manuale in HTML:	             |	Uso di <super-grid>:
+----------------------------------------------------------------------
+Devi digitare a mano ogni <student-card> |	Basta un’unica riga
+	 									 |  <super-grid> e il
+ 										 |	componente genera tutte
+ 										 |	le card da un array di dati
+----------------------------------------------------------------------
+Ogni volta che cambia un dato 			 | Chiami il tuo StudentService 
+(es. aggiungi un nuovo studente)		 | e <super-grid> aggiorna 
+devi aggiornare l’HTML					 | automaticamente la lista
+----------------------------------------------------------------------
+Non c’è incapsulamento: styling e logica | Logica di rendering + CSS isolati 
+sparsi nella pagina						 | dentro <super-grid> e <student-card>
+----------------------------------------------------------------------
+Non puoi facilmente ri‑usare lo stesso   | Puoi mettere <super-grid> ovunque
+pattern in altre parti dell’app	 		 | tu voglia mostrare una lista 
+										 | di studenti senza duplicare codice
